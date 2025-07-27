@@ -1,0 +1,156 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<body>
+  <div class="container">
+  <div class="music-player">
+    <nav>
+  <div class="circle">
+              <div onclick="prevSong()"><i class='bx bx-arrow-back'></i></div>
+                </div>
+    
+                <div class="circle">
+                <i class='bx bx-menu'></i>
+                    
+                </div>
+            </nav>
+            <img src="media/pic 1.jpg" class="song-img" id="cover">
+            <h1 id="title">Samar Jafri</h1>
+            <p id="artist">Main Rahun</p>
+            <audio id="song">
+
+                <source src="media/Main Rahun.mp3" type="audio/mpeg">
+            </audio>
+<div id="playlist" class="playlist hidden">
+  <h3>🎵 Playlist</h3>
+  <ul id="songList"></ul>
+</div>
+
+
+
+            <input type="range" value="0" id="progress">
+            <div class="controls">
+            <div onclick="prevSong()"><i class='bx bx-skip-previous'></i></div>
+            <div onclick="playPause()"><i class='bx  bx-play' id="ctrlIcon"></i></div>
+            <div onclick="nextSong()"><i class='bx bx-skip-next'></i></div> 
+            </div>
+        </div>
+    </div>
+     <script >
+      let songList = document.getElementById("songList");
+
+// Load songs into playlist
+const songs = [
+    {
+        title: "Main Rahoon",
+        artist: "Samar Jafri",
+        src: "media/Main Rahun.mp3",
+        cover: "media/pic 1.jpg"
+    },
+    {
+        title: "hoor",
+        artist: "samar jafri",
+        src: "media/Hoor.mp3",
+        cover: "media/Images.jpg"
+    },
+    {
+        title: "behkana",
+        artist: "asad ali",
+        src: "media/Behkana.mp3",
+        cover: "media/pic 3.jpg"
+    },
+    {
+        title: "Gusharish",
+        artist: "Samar jafri",
+        src: "media/Guzaarishein.mp3",
+        cover: "media/pic2.Webp"
+    }
+];
+
+let song = document.getElementById("song");
+let progress = document.getElementById("progress");
+let ctrlIcon = document.getElementById("ctrlIcon");
+
+let title = document.getElementById("title");
+let artist = document.getElementById("artist");
+let cover = document.getElementById("cover");
+
+let currentSong = 0;
+
+function loadSong(index) {
+    const s = songs[index];
+      song.src = s.src;
+      title.textContent = s.title;
+      artist.textContent = s.artist;
+      cover.src = s.cover;
+      song.load();
+      song.play();
+      ctrlIcon.classList.remove("bx-play");
+      ctrlIcon.classList.add("bx-pause");
+}
+
+function playPause() {
+    if (song.paused) {
+        song.play();
+        ctrlIcon.classList.remove("bx-play");
+        ctrlIcon.classList.add("bx-pause");
+    } else {
+        song.pause();
+        ctrlIcon.classList.remove("bx-pause");
+        ctrlIcon.classList.add("bx-play");
+    }
+}
+function nextSong() {
+      currentSong = (currentSong + 1) % songs.length;
+      loadSong(currentSong);
+}
+
+function prevSong() {
+      currentSong = (currentSong - 1 + songs.length) % songs.length;
+      loadSong(currentSong);
+}
+
+song.onloadedmetadata = function () {
+      progress.max = song.duration;
+      progress.value = song.currentTime;
+};
+setInterval(() => {
+      progress.value = song.currentTime;
+}, 500);
+
+progress.onchange = function () {
+      song.currentTime = progress.value;
+      song.play();
+      ctrlIcon.classList.remove("bx-play");
+      ctrlIcon.classList.add("bx-pause");
+};
+// Automatically play next song when one ends
+    song.addEventListener("ended", nextSong);
+
+// Show/hide playlist
+document.querySelector(".bx-menu").addEventListener("click", function () {
+  document.getElementById("playlist").classList.toggle("hidden");
+});
+
+// Load playlist UI
+songs.forEach((s, index) => {
+  const li = document.createElement("li");
+  li.textContent = `${s.title} - ${s.artist}`;
+  li.onclick = () => {
+    currentSong = index;
+    loadSong(index);
+    document.getElementById("playlist").classList.add("hidden");
+  };
+  document.getElementById("songList").appendChild(li);
+});
+
+     </script>
+</body>
+</html> 
